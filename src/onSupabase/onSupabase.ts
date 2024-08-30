@@ -1,15 +1,15 @@
+import { EdgeError } from "@/onEdge";
 import { createClient } from "@supabase/supabase-js";
-import { EdgeError } from "./onEdge/EdgeError.js";
 
 const url = process.env.SUPABASE_URL;
 const key = process.env.SUPABASE_ANON_KEY;
 
-export interface onSupabaseParams {
+export interface onSupabaseParams<D> {
 	req: Request;
-	options: Parameters<typeof createClient>[2];
+	options: Parameters<typeof createClient<D>>[2];
 }
 
-export const onSupabase = <D>({ req, options }: onSupabaseParams) => {
+export const onSupabase = <D>({ req, options }: onSupabaseParams<D>) => {
 	const Authorization = req.headers.get("Authorization") as string;
 
 	if (!url || !key) throw new EdgeError();
@@ -25,6 +25,10 @@ export const onSupabase = <D>({ req, options }: onSupabaseParams) => {
 			},
 		},
 	});
+
+	const resp = supabase.from("users").select();
+
+	type data = Awaited<typeof resp>["data"];
 
 	return supabase;
 };

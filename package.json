@@ -1,57 +1,65 @@
 {
-  "name": "edge",
-  "version": "0.1.0",
-  "license": "MIT",
-  "author": "leomerida15",
-  "main": "dist/index.js",
-  "module": "dist/edge.esm.js",
-  "typings": "dist/index.d.ts",
-  "type": "module",
-  "files": [
-    "dist",
-    "src"
-  ],
-  "scripts": {
-    "analyze": "size-limit --why",
-    "build": "dts build",
-    "lint": "dts lint",
-    "prepare": "dts build",
-    "size": "size-limit",
-    "start": "dts watch",
-    "test": "dts test"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "dts lint"
-    }
-  },
-  "peerDependencies": {},
-  "engines": {
-    "node": ">=12"
-  },
-  "size-limit": [
-    {
-      "path": "dist/edge.cjs.production.min.js",
-      "limit": "10 KB"
-    },
-    {
-      "path": "dist/edge.esm.js",
-      "limit": "10 KB"
-    }
-  ],
-  "devDependencies": {
-    "@biomejs/biome": "^1.8.3",
-    "@size-limit/preset-small-lib": "^11.1.4",
-    "@tsconfig/recommended": "^1.0.7",
-    "dts-cli": "^2.0.5",
-    "husky": "^9.1.5",
-    "size-limit": "^11.1.4",
-    "tslib": "^2.7.0",
-    "typescript": "^5.5.4"
-  },
-  "dependencies": {
-    "@deno/types": "^0.0.1",
-    "@supabase/supabase-js": "^2.45.2",
-    "http-status-codes": "^2.3.0"
-  }
+	"name": "@rocket-kit/edge",
+	"version": "0.0.0-alpha",
+	"license": "MIT",
+	"author": {
+		"name": "leomerida15",
+		"email": "dimasmerida15@gmail.com",
+		"url": "https://github.com/leomerida15"
+	},
+	"main": "dist/index.js",
+	"module": "dist/edge.esm.js",
+	"typings": "dist/index.d.ts",
+	"type": "module",
+	"files": ["dist", "src"],
+	"scripts": {
+		"analyze": "size-limit --why",
+		"build": "dts build",
+		"lint": "dts lint",
+		"prepare": "dts build",
+		"size": "size-limit",
+		"start": "dts watch",
+		"test": "dts test",
+		"Up": "npm publish --access public"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "dts lint"
+		}
+	},
+	"peerDependencies": {},
+	"engines": {
+		"node": ">=18"
+	},
+	"size-limit": [
+		{
+			"path": "dist/edge.cjs.production.min.js",
+			"limit": "10 KB"
+		},
+		{
+			"path": "dist/edge.esm.js",
+			"limit": "10 KB"
+		}
+	],
+	"devDependencies": {
+		"@biomejs/biome": "^1.8.3",
+		"@size-limit/preset-small-lib": "^11.1.4",
+		"@tsconfig/recommended": "^1.0.7",
+		"dts-cli": "^2.0.5",
+		"husky": "^9.1.5",
+		"size-limit": "^11.1.4",
+		"tslib": "^2.7.0",
+		"typescript": "^5.5.4"
+	},
+	"dependencies": {
+		"@deno/types": "^0.0.1",
+		"@supabase/supabase-js": "^2.45.2",
+		"http-status-codes": "^2.3.0"
+	},
+	"homepage": "https://github.com/leomerida15/rocket-kit-edge",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/leomerida15/rocket-kit-edge"
+	},
+	"keywords": ["supabase", "edge functions", "deno", "cloud"]
 }

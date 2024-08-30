@@ -1,2 +1,2 @@
-export * from "./onEdge";
 export * from "./onSupabase";
+export * from "./SupaError";
