@@ -1,31 +1,31 @@
-import { StatusCodes, getReasonPhrase } from "http-status-codes";
+import { getReasonPhrase, StatusCodes } from "npm:http-status-codes";
 
 interface EdgeErrorParams {
-	status?: number;
-	message?: string;
+    status?: number;
+    message?: string;
 }
 
 export class EdgeError extends Error {
-	statusText?: string;
-	status: number;
+    statusText?: string;
+    status: number;
 
-	constructor({
-		status = StatusCodes.INTERNAL_SERVER_ERROR,
-		message = getReasonPhrase(status),
-	}: EdgeErrorParams = {}) {
-		super(message);
-		this.name = "EdgeError";
-		this.status = status;
-		this.statusText = getReasonPhrase(status);
-	}
+    constructor(
+        {
+            status = StatusCodes.INTERNAL_SERVER_ERROR,
+            message = getReasonPhrase(status),
+        }: EdgeErrorParams = {},
+    ) {
+        super(message);
+        this.name = "EdgeError";
 
-	get resp(): [string, { status: number; statusText?: string }] {
-		return [
-			super.message,
-			{
-				status: this.status,
-				statusText: this.statusText,
-			},
-		];
-	}
+        this.status = status;
+        this.statusText = getReasonPhrase(status);
+    }
+
+    get resp(): [string, { status: number; statusText?: string }] {
+        return [super.message, {
+            status: this.status,
+            statusText: this.statusText,
+        }];
+    }
 }
