@@ -2,7 +2,7 @@
 
 ![logo](_media/icon.svg)
 
-# @rocket-kit/edge <small>0.0.1</small>
+# @rocket-kit/edge <small>0.1.0</small>
 
 > toolkit for creating edge functions in supabase.
 
