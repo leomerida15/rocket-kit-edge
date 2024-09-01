@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { TypeOf, ZodObject, ZodType, ZodTypeDef } from "zod";
 import { responseFactory } from "./responseFactory";
 
@@ -29,6 +30,7 @@ export type HandlerType<
 	B extends ZodType<any, ZodTypeDef, any> = any,
 	C extends ZodObject<any> = any,
 	Q extends ZodObject<any> = any,
+	P extends ZodObject<any> = any,
 > = (
 	req: IZodRequestFactoryResp<B, C, Q, P>,
 	reply: ReturnType<typeof responseFactory>,
@@ -43,5 +45,5 @@ export interface IZodRouteParams<
 	P extends ZodObject<any>,
 > {
 	schemas?: IZodSchemasValid<B, C, Q, P>;
-	Handler: HandlerType<B, C, Q>;
+	Handler: HandlerType<B, C, Q, P>;
 }

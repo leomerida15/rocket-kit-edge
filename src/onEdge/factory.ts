@@ -1,3 +1,4 @@
+import { Deno } from "@deno/types";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import { ZodError, ZodObject, ZodType, ZodTypeDef } from "zod";
 import { EdgeError } from "./EdgeError";

@@ -25,30 +25,6 @@ export default class ValidAndFormat<
 		this.valid_methods = !["DELETE", "GET"].includes(nativeRequest.method);
 	}
 
-	private getParams(route: string, pathname: string) {
-		const params = {};
-		const paramNames: string[] = [];
-
-		// Convertimos el path con parámetros a una expresión regular
-		const regexPath = route.replace(/\/:(\w+)/g, (_, paramName) => {
-			paramNames.push(paramName);
-			return "/([^/]+)";
-		});
-
-		// Creamos la expresión regular con el comienzo (^) y fin ($) del string
-		const regex = new RegExp(`^${regexPath}$`);
-
-		// Hacemos el match y extraemos los valores de los parámetros
-		const match = pathname.match(regex);
-		if (match) {
-			paramNames.forEach((paramName, index) => {
-				params[paramName] = match[index + 1];
-			});
-		}
-
-		return params;
-	}
-
 	private getQueryParams(): URLSearchParams {
 		const url = new URL(
 			this.nativeRequest.url,

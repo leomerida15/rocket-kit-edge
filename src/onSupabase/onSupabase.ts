@@ -1,12 +1,12 @@
-import { EdgeError } from "@/onEdge";
+import { EdgeError, IZodRequestFactoryResp } from "@/onEdge";
 import { createClient } from "@supabase/supabase-js";
 
 const url = process.env.SUPABASE_URL;
 const key = process.env.SUPABASE_ANON_KEY;
 
 export interface onSupabaseParams<D> {
-	req: Request;
-	options: Parameters<typeof createClient<D>>[2];
+	req: Request | IZodRequestFactoryResp<any, any, any, any>;
+	options?: Parameters<typeof createClient<D>>[2];
 }
 
 export const onSupabase = <D>({ req, options }: onSupabaseParams<D>) => {

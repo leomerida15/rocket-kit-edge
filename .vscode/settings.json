@@ -80,5 +80,11 @@
 	},
 	"[typescript]": {
 		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[xml]": {
+		"editor.defaultFormatter": "redhat.vscode-xml"
+	},
+	"[html]": {
+		"editor.defaultFormatter": "vscode.html-language-features"
 	}
 }
