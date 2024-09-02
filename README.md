@@ -15,11 +15,9 @@ import { onEdge, onRouter, onSupabase } from "npm:@rocket-kit/edge";
 ### Sigle Example
 
 ```typescript
-//  file: ./index.ts
-
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
-import { onEdge } from "npm:@rocket-kit/edge";
+import { onRouter } from "npm:@rocket-kit/edge";
 import { Middleware } from './middleware';
 import { Controller } from './controller';
 
@@ -41,8 +39,6 @@ Deno.serve(Controller);
 
 
 ``` typescript
-//  file: ./example.middleware.ts
-
 import { onEdge } from "npm:@rocket-kit/edge";
 
 export const Middleware = onEdge({
@@ -58,8 +54,6 @@ export const Middleware = onEdge({
 #### Controller
 
 ``` typescript
-//  file: ./example.controller.ts
-
 import { z } from "npm:zod";
 import { onEdge, onSupabase, SupaError, ReasonPhrases, StatusCodes } from "npm:@rocket-kit/edge";
 
@@ -113,8 +107,6 @@ export const Controller = onEdge({
 #### Router
 
 ```typescript
-//  file: ./index.ts
-
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 import { onRouter } from "npm:@rocket-kit/edge";
