@@ -99,6 +99,23 @@ export const onRouter = () => {
 		return undefined;
 	};
 
+	const options = () => {
+		const statusText = getReasonPhrase(StatusCodes.OK);
+
+		const headers = {
+			"Access-Control-Allow-Origin": "*",
+			"Access-Control-Allow-Headers":
+				"authorization, x-client-info, apikey, content-type",
+			"Content-Type": "application/json",
+		};
+
+		return new Response(statusText, {
+			status: StatusCodes.OK,
+			headers,
+			statusText,
+		});
+	};
+
 	return {
 		get(path: string, ...controllers: controller[]) {
 			const httpMethods = httpMethodsMap.get("GET")!;
@@ -120,23 +137,6 @@ export const onRouter = () => {
 			httpMethods.set(path, controllers);
 		},
 
-		options() {
-			const statusText = getReasonPhrase(StatusCodes.OK);
-
-			const headers = {
-				"Access-Control-Allow-Origin": "*",
-				"Access-Control-Allow-Headers":
-					"authorization, x-client-info, apikey, content-type",
-				"Content-Type": "application/json",
-			};
-
-			return new Response(statusText, {
-				status: StatusCodes.OK,
-				headers,
-				statusText,
-			});
-		},
-
 		listen(...props: Parameters<Deno.ServeHandler>) {
 			const req = props[0];
 
@@ -144,7 +144,7 @@ export const onRouter = () => {
 
 			const method = req.method as httpMethods;
 
-			if (method === "OPTIONS") return this.options();
+			if (method === "OPTIONS") return options();
 
 			// Extract the last part of the path as the command
 			const pathname = url.pathname;
