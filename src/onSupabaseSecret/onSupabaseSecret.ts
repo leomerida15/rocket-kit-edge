@@ -1,8 +1,9 @@
+import { Deno } from "@deno/types";
 import { createClient } from "@supabase/supabase-js";
 import { EdgeError, IZodRequestFactoryResp } from "../index";
 
-const url = process.env.SUPABASE_URL;
-const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const url = Deno.env.get("SUPABASE_URL");
+const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
 export const onSupabaseSecret = <Database>({
 	req,
