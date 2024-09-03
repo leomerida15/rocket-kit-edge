@@ -4,18 +4,19 @@ import { EdgeError, IZodRequestFactoryResp } from "../index";
 const url = process.env.SUPABASE_URL;
 const key = process.env.SUPABASE_ANON_KEY;
 
-export interface onSupabaseParams<D> {
+export const onSupabase = <Database>({
+	req,
+	options,
+}: {
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	req: Request | IZodRequestFactoryResp<any, any, any, any>;
-	options?: Parameters<typeof createClient<D>>[2];
-}
-
-export const onSupabase = <D>({ req, options }: onSupabaseParams<D>) => {
+	options?: Parameters<typeof createClient<Database>>[2];
+}) => {
 	const Authorization = req.headers.get("Authorization") as string;
 
 	if (!url || !key) throw new EdgeError();
 
-	const supabase = createClient<D>(url, key, {
+	const supabase = createClient<Database>(url, key, {
 		...options,
 
 		global: {
@@ -26,10 +27,6 @@ export const onSupabase = <D>({ req, options }: onSupabaseParams<D>) => {
 			},
 		},
 	});
-
-	const resp = supabase.from("users").select();
-
-	type data = Awaited<typeof resp>["data"];
 
 	return supabase;
 };
