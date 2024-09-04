@@ -14,6 +14,9 @@ type controller = (
 ) => Response | Promise<Response> | void | Promise<void>;
 
 export const onRouter = () => {
+	const preMiddy = new Set<controller>([]);
+	const posMiddy = new Set<controller>([]);
+
 	const httpMethodsMap = new Map<httpMethods, Map<string, controller[]>>([
 		["GET", new Map<string, controller[]>()],
 		["POST", new Map<string, controller[]>()],
@@ -44,7 +47,15 @@ export const onRouter = () => {
 		controllers: controller[],
 		params: Parameters<Deno.ServeHandler>,
 	) => {
-		for (const controller of controllers) {
+		const EventsList = [controllers];
+
+		if (preMiddy.size) EventsList.unshift(Array.from(preMiddy));
+
+		if (posMiddy.size) EventsList.push(Array.from(posMiddy));
+
+		const Events = EventsList.flat();
+
+		for (const Event of Events) {
 			try {
 				const onAwaited = (params: Parameters<Deno.ServeHandler>) =>
 					new Promise<Response | undefined>((resolver, reject) => {
@@ -52,9 +63,7 @@ export const onRouter = () => {
 							reject(undefined);
 						}) as unknown as () => Response;
 
-						return resolver(
-							controller(...params, next) as Response | undefined,
-						);
+						return resolver(Event(...params, next) as Response | undefined);
 					});
 
 				const response = await onAwaited(params);
@@ -136,6 +145,9 @@ export const onRouter = () => {
 			const httpMethods = httpMethodsMap.get("DELETE")!;
 			httpMethods.set(path, controllers);
 		},
+
+		preMiddy,
+		posMiddy,
 
 		listen(...props: Parameters<Deno.ServeHandler>) {
 			const req = props[0];

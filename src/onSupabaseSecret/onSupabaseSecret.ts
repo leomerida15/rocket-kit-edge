@@ -1,9 +1,8 @@
-import { Deno } from "@deno/types";
 import { createClient } from "@supabase/supabase-js";
-import { EdgeError, IZodRequestFactoryResp } from "../index";
+import { EdgeError, IZodRequestFactoryResp, StatusCodes } from "../index";
 
-const url = Deno.env.get("SUPABASE_URL");
-const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+const url = process.env.SUPABASE_URL;
+const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 export const onSupabaseSecret = <Database>({
 	req,
@@ -13,9 +12,14 @@ export const onSupabaseSecret = <Database>({
 	req: Request | IZodRequestFactoryResp<any, any, any, any>;
 	options?: Parameters<typeof createClient<Database>>[2];
 }) => {
-	const Authorization = req.headers.get("Authorization") as string;
+	if (!url || !key) {
+		const message =
+			"the .env var SUPABASE_URL as SUPABASE_SERVICE_ROLE_KEY is required";
 
-	if (!url || !key) throw new EdgeError();
+		throw new EdgeError({ message, status: StatusCodes.BAD_REQUEST });
+	}
+
+	const Authorization = `Bearer ${key}`;
 
 	const supabase = createClient<Database>(url, key, {
 		...options,
