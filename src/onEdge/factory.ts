@@ -6,6 +6,8 @@ import { requestFactory } from "./requestFactory";
 import { responseFactory } from "./responseFactory";
 import { IZodRouteParams } from "./types";
 
+const jwt = process.env.SUPABASE_JWT;
+
 export const onEdge = <
 	B extends ZodType<any, ZodTypeDef, any>,
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -43,6 +45,10 @@ export const onEdge = <
 			})();
 
 			const req = await requestFactory<B, C, Q, P>(request, Info, schemas);
+
+			const auth = req.headers.get("Authorization");
+
+			if (!jwt && auth) process.env.SUPABASE_JWT = auth;
 
 			return Handler(req, reply, Info, next);
 		} catch (error) {
