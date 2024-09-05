@@ -1,17 +1,22 @@
-import { createClient } from "@supabase/supabase-js";
-import { EdgeError, IZodRequestFactoryResp, StatusCodes } from "../index";
+import { SupabaseClient, createClient } from "@supabase/supabase-js";
+import { GenericSchema } from "@supabase/supabase-js/dist/module/lib/types";
+import { EdgeError, StatusCodes } from "../index";
 
 const url = process.env.SUPABASE_URL;
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-export const onSupabaseSecret = <Database>({
-	req,
-	options,
-}: {
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	req: Request | IZodRequestFactoryResp<any, any, any, any>;
-	options?: Parameters<typeof createClient<Database>>[2];
-}) => {
+export const onSupabaseSecret = <
+	Database,
+	SchemaName extends string & keyof Database = "public" extends keyof Database
+		? "public"
+		: string & keyof Database,
+	Schema extends GenericSchema = Database[SchemaName] extends GenericSchema
+		? Database[SchemaName]
+		: // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+			any,
+>(
+	options?: Parameters<typeof createClient<Database>>[2],
+): SupabaseClient<Database, SchemaName, Schema> => {
 	if (!url || !key) {
 		const message =
 			"the .env var SUPABASE_URL as SUPABASE_SERVICE_ROLE_KEY is required";
@@ -33,5 +38,5 @@ export const onSupabaseSecret = <Database>({
 		},
 	});
 
-	return supabase;
+	return supabase as SupabaseClient<Database, SchemaName, Schema>;
 };

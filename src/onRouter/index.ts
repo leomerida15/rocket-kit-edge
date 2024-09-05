@@ -152,6 +152,10 @@ export const onRouter = () => {
 		listen(...props: Parameters<Deno.ServeHandler>) {
 			const req = props[0];
 
+			const jwt = req.headers.get("Authorization");
+
+			if (jwt) process.env.SUPABASE_JWT = jwt;
+
 			const url = new URL(req.url);
 
 			const method = req.method as httpMethods;
