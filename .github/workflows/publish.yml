@@ -7,25 +7,6 @@ jobs:
     name: 🧪 Lint and test
     runs-on: ubuntu-latest
 
-    steps:
-      - name: 👍 Checkout
-        uses: actions/checkout@v3
-
-      - name: ❇️ Setup node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: 'npm'
-
-      - name: 📥 Install Dependencies
-        run: npm install
-
-      - name: 💅 Lint
-        run: npm run lint
-
-      - name: 🧑‍🔬 Component Tests
-        run: npm run cy:run
-
   publish:
     name: 🚀 Publish
     runs-on: ubuntu-latest
@@ -40,17 +21,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'npm'
-
-
-      - name: 📥 Install Bun
-        run: npm install  bun -g
+          cache: 'yarn'
 
       - name: 📥 Install Dependencies
-        run: bun install
+        run: yarn install
 
       - name: 🛠️ Build
-        run: bun run build
+        run: yarn run build
 
       - name: 🚀 Publish to npm
         uses: JS-DevTools/npm-publish@v1
