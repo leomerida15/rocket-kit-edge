@@ -1,5 +1,6 @@
 import { Deno } from "@deno/types";
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
+import { env } from "../global.env";
 
 type httpMethods = "GET" | "POST" | "PUT" | "DELETE" | "OPTIONS";
 
@@ -154,7 +155,7 @@ export const onRouter = () => {
 
 			const jwt = req.headers.get("Authorization");
 
-			if (jwt) process.env.SUPABASE_JWT = jwt;
+			if (jwt) env.set("SUPABASE_JWT", jwt);
 
 			const url = new URL(req.url);
 

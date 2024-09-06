@@ -1,6 +1,7 @@
-import { Deno } from "@deno/types";
+import { Deno as DenoTypes } from "@deno/types";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import { ZodError, ZodObject, ZodType, ZodTypeDef } from "zod";
+import { env } from "../global.env";
 import { EdgeError } from "./EdgeError";
 import { requestFactory } from "./requestFactory";
 import { responseFactory } from "./responseFactory";
@@ -21,7 +22,7 @@ export const onEdge = <
 
 	const controllerFactory = async (
 		request: Request,
-		Info: Deno.ServeHandlerInfo,
+		Info: DenoTypes.ServeHandlerInfo,
 		next?: () => Response,
 	) => {
 		try {
@@ -48,7 +49,7 @@ export const onEdge = <
 
 			const auth = req.headers.get("Authorization");
 
-			if (!jwt && auth) process.env.SUPABASE_JWT = auth;
+			if (!jwt && auth) env.set("SUPABASE_JWT", auth);
 
 			return Handler(req, reply, Info, next);
 		} catch (error) {

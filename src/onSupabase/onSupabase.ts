@@ -1,10 +1,10 @@
 import { SupabaseClient, createClient } from "@supabase/supabase-js";
 import { GenericSchema } from "@supabase/supabase-js/dist/module/lib/types";
+import { env } from "../global.env";
 import { EdgeError } from "../index";
 
 const url = process.env.SUPABASE_URL;
 const key = process.env.SUPABASE_ANON_KEY;
-const jwt = process.env.SUPABASE_JWT;
 
 export const onSupabase = <
 	Database,
@@ -18,6 +18,8 @@ export const onSupabase = <
 >(
 	options?: Parameters<typeof createClient<Database>>[2],
 ): SupabaseClient<Database, SchemaName, Schema> => {
+	const jwt = env.get("SUPABASE_JWT");
+
 	if (!url || !key || !jwt) throw new EdgeError();
 
 	const supabase = createClient<Database>(url, key, {

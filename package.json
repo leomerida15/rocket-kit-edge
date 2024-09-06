@@ -1,6 +1,6 @@
 {
 	"name": "@rocket-kit/edge",
-	"version": "0.5.0",
+	"version": "0.5.5",
 	"license": "MIT",
 	"author": {
 		"name": "leomerida15",
@@ -53,8 +53,9 @@
 	},
 	"dependencies": {
 		"@deno/types": "^0.0.1",
-		"@supabase/supabase-js": "^2.45.2",
-		"http-status-codes": "^2.3.0"
+		"@supabase/supabase-js": "^2.45.3",
+		"http-status-codes": "^2.3.0",
+		"zod": "^3.23.8"
 	},
 	"homepage": "https://leomerida15.github.io/rocket-kit-edge",
 	"repository": {
