@@ -1,6 +1,6 @@
 import { SupabaseClient, createClient } from "@supabase/supabase-js";
 import { GenericSchema } from "@supabase/supabase-js/dist/module/lib/types";
-import { env } from "../global.env";
+import { RocketEnvs } from "../global.env";
 import { EdgeError } from "../index";
 
 const url = process.env.SUPABASE_URL;
@@ -18,7 +18,7 @@ export const onSupabase = <
 >(
 	options?: Parameters<typeof createClient<Database>>[2],
 ): SupabaseClient<Database, SchemaName, Schema> => {
-	const jwt = env.get("SUPABASE_JWT");
+	const jwt = RocketEnvs.get("SUPABASE_JWT");
 
 	if (!url || !key || !jwt) throw new EdgeError();
 

@@ -1,7 +1,7 @@
 import { Deno as DenoTypes } from "@deno/types";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import { ZodError, ZodObject, ZodType, ZodTypeDef } from "zod";
-import { env } from "../global.env";
+import { RocketEnvs } from "../global.env";
 import { EdgeError } from "./EdgeError";
 import { requestFactory } from "./requestFactory";
 import { responseFactory } from "./responseFactory";
@@ -49,7 +49,7 @@ export const onEdge = <
 
 			const auth = req.headers.get("Authorization");
 
-			if (!jwt && auth) env.set("SUPABASE_JWT", auth);
+			if (!jwt && auth) RocketEnvs.set("SUPABASE_JWT", auth);
 
 			return Handler(req, reply, Info, next);
 		} catch (error) {

@@ -1,1 +1,1 @@
-export const env = new Map<"SUPABASE_JWT", string>();
+export const RocketEnvs = new Map<"SUPABASE_JWT", string>();
