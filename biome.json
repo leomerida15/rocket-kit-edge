@@ -3,7 +3,13 @@
 	"organizeImports": {
 		"enabled": true
 	},
+
+	"formatter": {
+		"ignore": [".vscode"]
+	},
+
 	"linter": {
+		"ignore": [".vscode"],
 		"enabled": true,
 		"rules": {
 			"recommended": true,
