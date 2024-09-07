@@ -30,4 +30,9 @@ jobs:
         run: bun test --ci --coverage --max-workers=2
 
       - name: Build
-        run: bun build
+        run: bun run build
+
+      - name: Publish to npm
+        run: bun publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
