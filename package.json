@@ -20,7 +20,7 @@
 		"size": "size-limit",
 		"start": "dts watch",
 		"test": "dts test",
-		"Up": "npm publish --access public"
+		"Up": "npm adduser && npm publish --access public"
 	},
 	"husky": {
 		"hooks": {
@@ -61,7 +61,7 @@
 	"homepage": "https://leomerida15.github.io/rocket-kit-edge",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/leomerida15/rocket-kit-edge"
+		"url": "git+https://github.com/leomerida15/rocket-kit-edge.git"
 	},
 	"keywords": ["supabase", "edge functions", "deno", "cloud"]
 }
