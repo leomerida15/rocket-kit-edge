@@ -14,6 +14,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Set git directory as safe
+        run: git config --global --add safe.directory /github/workspace
+
       - name: Set up Bun
         uses: oven-sh/setup-bun@v1
         with:

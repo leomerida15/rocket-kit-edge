@@ -29,7 +29,8 @@
 	},
 	"peerDependencies": {},
 	"engines": {
-		"node": ">=18"
+		"node": ">=18",
+		"bun": ">= 1.0.0"
 	},
 	"size-limit": [
 		{
