@@ -11,11 +11,13 @@
 	"linter": {
 		"ignore": [".vscode", "dist"],
 		"enabled": true,
+
 		"rules": {
 			"recommended": true,
 			"suspicious": {
 				"noDebugger": "off",
-				"noConstEnum": "off"
+				"noConstEnum": "off",
+				"noExplicitAny": "off"
 			},
 			"style": {
 				"noNonNullAssertion": "off",

@@ -11,7 +11,6 @@ const jwt = process.env.SUPABASE_JWT;
 
 export const onEdge = <
 	B extends ZodType<any, ZodTypeDef, any>,
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	C extends ZodObject<any>,
 	Q extends ZodObject<any>,
 	P extends ZodObject<any>,
