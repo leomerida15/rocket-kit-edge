@@ -20,7 +20,7 @@
 		"size": "size-limit",
 		"start": "dts watch",
 		"test": "dts test",
-		"Up": "npm adduser && npm publish --access public"
+		"Up": "npm publish --access public"
 	},
 	"husky": {
 		"hooks": {
