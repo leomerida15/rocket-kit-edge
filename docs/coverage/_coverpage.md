@@ -10,5 +10,5 @@
 - Is part of the @rocket-kit family
 
 
-[GitHub](https://github.com/docsifyjs/docsify/)
+[GitHub](https://github.com/leomerida15/rocket-kit-edge)
 [Get Started](#quick-start)
