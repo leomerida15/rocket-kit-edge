@@ -13,8 +13,7 @@ export const onSupabase = <
 		: string & keyof Database,
 	Schema extends GenericSchema = Database[SchemaName] extends GenericSchema
 		? Database[SchemaName]
-		: // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-			any,
+		: any,
 >(
 	options?: Parameters<typeof createClient<Database>>[2],
 ): SupabaseClient<Database, SchemaName, Schema> => {
