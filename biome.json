@@ -5,11 +5,11 @@
 	},
 
 	"formatter": {
-		"ignore": [".vscode"]
+		"ignore": [".vscode", "dist"]
 	},
 
 	"linter": {
-		"ignore": [".vscode"],
+		"ignore": [".vscode", "dist"],
 		"enabled": true,
 		"rules": {
 			"recommended": true,
