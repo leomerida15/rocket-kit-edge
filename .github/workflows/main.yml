@@ -12,7 +12,7 @@ jobs:
         os: [ubuntu-latest]
 
     steps:
-      - name: Checkout repo
+      - name: ❇️ Checkout repo
         uses: actions/checkout@v4
 
       - name: Set up Bun
@@ -20,16 +20,16 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Install dependencies with Bun (with cache)
+      - name: 📥 Install dependencies with Bun (with cache)
         run: bun install
 
-      - name: Lint
+      - name: 💅 Lint
         run: bun lint
 
-      - name: Test
+      - name: 🧪 Test
         run: bun test --ci --coverage --max-workers=2
 
-      - name: Build
+      - name: 🛠️ Build
         run: bun run build
 
       - name: 🚀 Publish to npm
