@@ -3,9 +3,8 @@
 ## Install
 
 
-``` typescript
-import { onEdge, onRouter, onSupabase } from "npm:@rocket-kit/edge";
-
+``` bash
+deno add npm:@rocket-kit/edge npm:zod jsr:@supabase/functions-js/edge-runtime.d.ts
 ```
 
 
@@ -19,7 +18,7 @@ import { onEdge, onRouter, onSupabase } from "npm:@rocket-kit/edge";
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
-import { onEdge } from "npm:@rocket-kit/edge";
+import { onEdge } from "@rocket-kit/edge";
 import { Middleware } from './middleware';
 import { Controller } from './controller';
 
@@ -60,7 +59,7 @@ export const Middleware = onEdge({
 ``` typescript
 //  file: ./example.controller.ts
 
-import { z } from "npm:zod";
+import { z } from "zod";
 import { onEdge, onSupabase, SupaError, ReasonPhrases, StatusCodes } from "npm:@rocket-kit/edge";
 
 export const Controller = onEdge({
