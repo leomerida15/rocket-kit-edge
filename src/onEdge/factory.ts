@@ -50,7 +50,7 @@ export const onEdge = <
 
 			if (!jwt && auth) RocketEnvs.set("SUPABASE_JWT", auth);
 
-			return Handler(req, reply, Info, next);
+			return Handler(req, reply, next);
 		} catch (error) {
 			if (error instanceof EdgeError) {
 				return reply.json(...error.resp);
