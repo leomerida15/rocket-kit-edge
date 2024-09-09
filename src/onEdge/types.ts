@@ -34,7 +34,6 @@ export type HandlerType<
 > = (
 	req: IZodRequestFactoryResp<B, C, Q, P>,
 	reply: ReturnType<typeof responseFactory>,
-	Info: TypeOf<C>,
 	next?: () => Response,
 ) => Response | Promise<Response>;
 

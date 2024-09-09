@@ -10,8 +10,9 @@
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple-dark.css">
-  <link rel="stylesheet" href="./coverage/src/index.css">
 
+  <link rel="stylesheet" href="./_media/index.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/sidebar.min.css" />
 </head>
 
 <body>
@@ -30,7 +31,22 @@
         tabComments: true, // default
         tabHeadings: true // default
       },
-      themeColor: '#507C5C'
+      themeColor: '#507C5C',
+      sidebarDisplayLevel: 3, // set sidebar display level
+      footer: {
+        copy: '<span>LatamEarth C.A. &copy; 2024</span> | ',
+        auth: 'by Dimas Merida',
+        pre: `<hr/>
+        <a href="https://latamearth.com/">
+          <img
+            load="lazy"
+            width="200"
+            src="https://latamearth.com/wp-content/uploads/2022/05/quark-latam-erth-e1654055726587-768x188.png"
+          />
+        </a>
+        `,
+        class: 'className',
+      },
     }
   </script>
   <!-- docsify (latest v4.x.x)-->
@@ -39,7 +55,40 @@
   <!-- plugins -->
   <script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
-  <script src="./coverage/src/index.js" />
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-typescript.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
+  <script src="//unpkg.com/docsify-footer-enh/dist/docsify-footer-enh.min.js"></script>
+  <!-- customn js -->
+  <script>
+    function createSquare() {
+      const section = document.querySelector(".cover");
+      const square = document.createElement("span");
+      square.classList.add("star");
+      const size = Math.random() * -10;
+
+      square.style.width = `${4 + size}px`;
+      square.style.height = `${4 + size}px`;
+
+      square.style.top = `${Math.random() * innerHeight}px`;
+      square.style.left = `${(Math.random() * innerWidth + 4)}px`;
+
+      section.appendChild(square);
+
+      setTimeout(() => {
+        square.remove();
+      }, 40000);
+    }
+
+    let init = setInterval(createSquare, 150);
+
+    window.addEventListener("resize", () => {
+      clearInterval(init);
+
+      init = setInterval(createSquare, 150);
+    });
+
+  </script>
 </body>
 
 </html>

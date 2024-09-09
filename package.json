@@ -1,6 +1,6 @@
 {
 	"name": "@rocket-kit/edge",
-	"version": "0.6.6",
+	"version": "1.0.0",
 	"license": "MIT",
 	"author": {
 		"name": "leomerida15",
@@ -20,7 +20,8 @@
 		"size": "size-limit",
 		"start": "dts watch",
 		"test": "dts test",
-		"Up": "npm publish --access public"
+		"Up": "npm publish --access public",
+		"doc:build": "bun nodemon --config docs/nodemon.json"
 	},
 	"husky": {
 		"hooks": {
@@ -46,8 +47,10 @@
 		"@biomejs/biome": "^1.8.3",
 		"@size-limit/preset-small-lib": "^11.1.4",
 		"@tsconfig/recommended": "^1.0.7",
+		"@types/bun": "^1.1.8",
 		"dts-cli": "^2.0.5",
 		"husky": "^9.1.5",
+		"nodemon": "^3.1.4",
 		"size-limit": "^11.1.4",
 		"tslib": "^2.7.0",
 		"typescript": "^5.5.4"

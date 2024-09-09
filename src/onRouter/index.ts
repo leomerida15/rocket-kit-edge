@@ -2,7 +2,7 @@ import { Deno } from "@deno/types";
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
 import { RocketEnvs } from "../global.env";
 
-type httpMethods = "GET" | "POST" | "PUT" | "DELETE" | "OPTIONS";
+type httpMethods = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS";
 
 interface Info extends Deno.ServeHandlerInfo {
 	store: Map<string, any>;
@@ -23,6 +23,7 @@ export const onRouter = () => {
 		["POST", new Map<string, controller[]>()],
 		["PUT", new Map<string, controller[]>()],
 		["DELETE", new Map<string, controller[]>()],
+		["PATCH", new Map<string, controller[]>()],
 	]);
 
 	const store = new Map<string, any>();
