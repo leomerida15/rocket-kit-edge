@@ -1,5 +1,4 @@
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
-import { Cors } from "../cors";
 
 export interface ReplyInit extends Omit<ResponseInit, "status"> {
 	status?: StatusCodes;
@@ -10,20 +9,18 @@ const getReplyInit = (init?: ReplyInit) => {
 		init.statusText = getReasonPhrase(init.status);
 	}
 
-	const cors = new Cors();
+	const headers = new Headers();
 
-	cors.set("Content-Type", "application/json");
-	cors.set("Access-Control-Allow-Origin", "*");
-	cors.set(
+	headers.set("Content-Type", "application/json");
+	headers.set("Access-Control-Allow-Origin", "*");
+	headers.set(
 		"Access-Control-Allow-Methods",
 		"GET, POST, PUT, PATCH, DELETE, OPTIONS",
 	);
-	cors.set(
+	headers.set(
 		"Access-Control-Allow-Headers",
 		"authorization, x-client-info, apikey, content-type",
 	);
-
-	const headers = cors.getHeaders();
 
 	const InitConfig = {
 		headers: { ...headers, ...init?.headers },
