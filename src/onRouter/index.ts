@@ -1,6 +1,5 @@
 import { Deno } from "@deno/types";
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
-import { Cors } from "../cors";
 import { RocketEnvs } from "../global.env";
 
 type httpMethods = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS";
@@ -32,20 +31,12 @@ export const onRouter = () => {
 	const notfound = () => {
 		const statusText = getReasonPhrase(StatusCodes.NOT_FOUND);
 
-		const cors = new Cors();
-
-		cors.set("Content-Type", "application/json");
-		cors.set("Access-Control-Allow-Origin", "*");
-		cors.set(
-			"Access-Control-Allow-Methods",
-			"GET, POST, PUT, PATCH, DELETE, OPTIONS",
-		);
-		cors.set(
-			"Access-Control-Allow-Headers",
-			"authorization, x-client-info, apikey, content-type",
-		);
-
-		const headers = cors.getHeaders();
+		const headers = {
+			"Access-Control-Allow-Origin": "*",
+			"Access-Control-Allow-Headers":
+				"authorization, x-client-info, apikey, content-type",
+			"Content-Type": "application/json",
+		};
 
 		return new Response(statusText, {
 			status: StatusCodes.NOT_FOUND,
@@ -122,22 +113,14 @@ export const onRouter = () => {
 	const options = () => {
 		const statusText = getReasonPhrase(StatusCodes.OK);
 
-		const cors = new Cors();
-
-		cors.set("Content-Type", "application/json");
-		cors.set("Access-Control-Allow-Origin", "*");
-		cors.set(
-			"Access-Control-Allow-Methods",
-			"GET, POST, PUT, PATCH, DELETE, OPTIONS",
-		);
-		cors.set(
-			"Access-Control-Allow-Headers",
-			"authorization, x-client-info, apikey, content-type",
-		);
-
-		cors.set("Access-Control-Max-Age", "86400");
-
-		const headers = cors.getHeaders();
+		const headers = {
+			"Access-Control-Allow-Origin": "*",
+			"Access-Control-Allow-Headers":
+				"authorization, x-client-info, apikey, content-type",
+			"Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+			"Content-Type": "application/json",
+			"Access-Control-Max-Age": "43200",
+		};
 
 		return new Response(statusText, {
 			status: StatusCodes.OK,
