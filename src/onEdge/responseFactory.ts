@@ -5,13 +5,12 @@ export interface ReplyInit extends Omit<ResponseInit, "status"> {
 }
 
 // Configurar los encabezados CORS
-const headers = new Headers();
-headers.set("Content-Type", "application/json");
-
-headers.set(
-	"Access-Control-Allow-Headers",
-	"authorization, x-client-info, apikey, content-type",
-);
+const headers = {
+	"Access-Control-Allow-Origin": "*",
+	"Access-Control-Allow-Headers":
+		"authorization, x-client-info, apikey, content-type",
+	"Content-Type": "application/json",
+};
 
 const getReplyInit = (init?: ReplyInit) => {
 	if (init?.status && !init?.statusText) {
