@@ -119,6 +119,7 @@ export const onRouter = () => {
 				"authorization, x-client-info, apikey, content-type",
 			"Content-Type": "application/json",
 			"Access-Control-Max-Age": "43200",
+			"Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
 		};
 
 		return new Response(statusText, {
