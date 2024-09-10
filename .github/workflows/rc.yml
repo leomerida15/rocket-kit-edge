@@ -32,9 +32,7 @@ jobs:
       - name: 🛠️ Build
         run: bun run build
 
-      - name: 🚀 Publish to npm
-        uses: JS-DevTools/npm-publish@v1
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
+      - name: 🚀 Publish to npm (experimental)
+        run: npm publish --tag experimental
         env:
-          NPM_TAG: rc
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
