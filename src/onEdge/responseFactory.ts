@@ -8,7 +8,10 @@ export interface ReplyInit extends Omit<ResponseInit, "status"> {
 const headers = new Headers();
 headers.set("Content-Type", "application/json");
 headers.set("Access-Control-Allow-Origin", "*");
-headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+headers.set(
+	"Access-Control-Allow-Methods",
+	"GET, POST, PUT, PATCH, DELETE, OPTIONS",
+);
 headers.set(
 	"Access-Control-Allow-Headers",
 	"authorization, x-client-info, apikey, content-type",
