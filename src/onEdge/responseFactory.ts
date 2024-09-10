@@ -1,17 +1,29 @@
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
-import { cors } from "../cors";
+import { Cors } from "../cors";
 
 export interface ReplyInit extends Omit<ResponseInit, "status"> {
 	status?: StatusCodes;
 }
 
-// Configurar los encabezados CORS
-const headers = cors.getHeaders();
-
 const getReplyInit = (init?: ReplyInit) => {
 	if (init?.status && !init?.statusText) {
 		init.statusText = getReasonPhrase(init.status);
 	}
+
+	const cors = new Cors();
+
+	cors.set("Content-Type", "application/json");
+	cors.set("Access-Control-Allow-Origin", "*");
+	cors.set(
+		"Access-Control-Allow-Methods",
+		"GET, POST, PUT, PATCH, DELETE, OPTIONS",
+	);
+	cors.set(
+		"Access-Control-Allow-Headers",
+		"authorization, x-client-info, apikey, content-type",
+	);
+
+	const headers = cors.getHeaders();
 
 	const InitConfig = {
 		headers: { ...headers, ...init?.headers },
