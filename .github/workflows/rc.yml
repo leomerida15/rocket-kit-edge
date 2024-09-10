@@ -37,4 +37,4 @@ jobs:
         with:
           token: ${{ secrets.NPM_TOKEN }}
         env:
-          NPM_TAG: experimental
+          NPM_TAG: rc
