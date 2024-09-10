@@ -7,7 +7,7 @@ export interface ReplyInit extends Omit<ResponseInit, "status"> {
 // Configurar los encabezados CORS
 const headers = new Headers();
 headers.set("Content-Type", "application/json");
-headers.set("Access-Control-Allow-Origin", "*"); // Puedes restringir esto a un dominio específico, como 'http://localhost:4040'
+headers.set("Access-Control-Allow-Origin", "*");
 headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
 headers.set(
 	"Access-Control-Allow-Headers",
