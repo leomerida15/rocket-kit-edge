@@ -176,13 +176,12 @@ export const onRouter = () => {
 
 			const method = req.method as httpMethods;
 
-			if (method === "OPTIONS") return defaultOptions();
-
 			// Extract the last part of the path as the command
 			const pathname = url.pathname;
 
 			const httpMethods = httpMethodsMap.get(method);
 
+			if (method === "OPTIONS" && !httpMethods) return defaultOptions();
 			if (!httpMethods) return notfound();
 
 			const paths = Array.from(httpMethods.keys());
