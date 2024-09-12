@@ -31,12 +31,14 @@ export const onRouter = () => {
 	const notfound = () => {
 		const statusText = getReasonPhrase(StatusCodes.NOT_FOUND);
 
-		const headers = {
-			"Access-Control-Allow-Origin": "*",
-			"Access-Control-Allow-Headers":
-				"authorization, x-client-info, apikey, content-type",
-			"Content-Type": "application/json",
-		};
+		const headers = new Headers();
+
+		headers.append("Access-Control-Allow-Origin", "*");
+		headers.append(
+			"Access-Control-Allow-Headers",
+			"authorization, x-client-info, apikey, content-type",
+		);
+		headers.append("Content-Type", "application/json");
 
 		return new Response(statusText, {
 			status: StatusCodes.NOT_FOUND,
@@ -110,17 +112,22 @@ export const onRouter = () => {
 		return undefined;
 	};
 
-	const options = () => {
+	const defaultOptions = () => {
 		const statusText = getReasonPhrase(StatusCodes.OK);
 
-		const headers = {
-			"Access-Control-Allow-Origin": "*",
-			"Access-Control-Allow-Headers":
-				"authorization, x-client-info, apikey, content-type",
-			"Content-Type": "application/json",
-			"Access-Control-Max-Age": "43200",
-			"Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
-		};
+		const headers = new Headers();
+
+		headers.append("Access-Control-Allow-Origin", "*");
+		headers.append(
+			"Access-Control-Allow-Headers",
+			"authorization, x-client-info, apikey, content-type",
+		);
+		headers.append("Content-Type", "application/json");
+		headers.append("Access-Control-Max-Age", "43200");
+		headers.append(
+			"Access-Control-Allow-Methods",
+			"GET, POST, PUT, PATCH, DELETE, OPTIONS",
+		);
 
 		return new Response(statusText, {
 			status: StatusCodes.OK,
@@ -150,6 +157,11 @@ export const onRouter = () => {
 			httpMethods.set(path, controllers);
 		},
 
+		options(path: string, ...controllers: controller[]) {
+			const httpMethods = httpMethodsMap.get("OPTIONS")!;
+			httpMethods.set(path, controllers);
+		},
+
 		preMiddy,
 		posMiddy,
 
@@ -164,13 +176,12 @@ export const onRouter = () => {
 
 			const method = req.method as httpMethods;
 
-			if (method === "OPTIONS") return options();
-
 			// Extract the last part of the path as the command
 			const pathname = url.pathname;
 
 			const httpMethods = httpMethodsMap.get(method);
 
+			if (method === "OPTIONS" && !httpMethods) return defaultOptions();
 			if (!httpMethods) return notfound();
 
 			const paths = Array.from(httpMethods.keys());
