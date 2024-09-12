@@ -5,26 +5,27 @@ export interface ReplyInit extends Omit<ResponseInit, "status"> {
 }
 
 // Configurar los encabezados CORS
-const headers = {
-	"Access-Control-Allow-Origin": "*",
-	"Access-Control-Allow-Headers":
-		"authorization, x-client-info, apikey, content-type",
-	"Content-Type": "application/json",
-};
-
 const getReplyInit = (init?: ReplyInit) => {
 	if (init?.status && !init?.statusText) {
 		init.statusText = getReasonPhrase(init.status);
 	}
 
+	const headers = new Headers(init?.headers);
+
+	headers.append(
+		"Access-Control-Allow-Headers",
+		"authorization, x-client-info, apikey, content-type",
+	);
+	headers.append("Access-Control-Allow-Origin", "*");
+	headers.append("Content-Type", "application/json");
+
 	const InitConfig = {
-		headers: { ...headers, ...init?.headers },
+		headers,
 		...init,
 	};
 
 	return InitConfig;
 };
-
 /**
  * Create a new response factory with the following methods:
  * - `rewrite`: Creates a new response with the given body, status code and headers.
