@@ -14,14 +14,14 @@ const getReplyInit = (init?: ReplyInit) => {
 
 	headers.append(
 		"Access-Control-Allow-Headers",
-		"authorization, x-client-info, apikey, content-type",
+		"authorization, x-client-info, apikey, Origin, X-Requested-With, Content-Type, Accept",
 	);
 	headers.append("Access-Control-Allow-Origin", "*");
 	headers.append("Content-Type", "application/json");
 
 	const InitConfig = {
-		headers,
 		...init,
+		headers,
 	};
 
 	return InitConfig;
