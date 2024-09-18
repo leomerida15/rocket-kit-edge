@@ -113,7 +113,9 @@ export const onRouter = () => {
 	};
 
 	const defaultOptions = () => {
-		const statusText = getReasonPhrase(StatusCodes.OK);
+		const status = StatusCodes.OK;
+
+		const statusText = getReasonPhrase(status);
 
 		const headers = new Headers();
 
@@ -124,16 +126,9 @@ export const onRouter = () => {
 		);
 		headers.append("Content-Type", "application/json");
 		headers.append("Access-Control-Max-Age", "43200");
-		headers.append(
-			"Access-Control-Allow-Methods",
-			"GET, POST, PUT, PATCH, DELETE, OPTIONS",
-		);
+		headers.append("Access-Control-Allow-Methods", "*");
 
-		return new Response(statusText, {
-			status: StatusCodes.OK,
-			headers,
-			statusText,
-		});
+		return Response.json(statusText, { status, headers, statusText });
 	};
 
 	return {
@@ -149,6 +144,11 @@ export const onRouter = () => {
 
 		put(path: string, ...controllers: controller[]) {
 			const httpMethods = httpMethodsMap.get("PUT")!;
+			httpMethods.set(path, controllers);
+		},
+
+		patch(path: string, ...controllers: controller[]) {
+			const httpMethods = httpMethodsMap.get("PATCH")!;
 			httpMethods.set(path, controllers);
 		},
 
