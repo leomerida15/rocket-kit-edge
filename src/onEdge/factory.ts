@@ -62,8 +62,17 @@ export const onEdge = <
 				});
 			}
 
-			return reply.json(error as Error, {
-				status: 500,
+			if (error instanceof ReferenceError || error instanceof Error)
+				return reply.json(
+					{
+						...error,
+						message: error.message,
+					},
+					{ status: StatusCodes.BAD_REQUEST },
+				);
+
+			return reply.json(error as string | object | number, {
+				status: StatusCodes.BAD_REQUEST,
 			});
 		}
 	};
