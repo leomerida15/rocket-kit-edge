@@ -2,24 +2,42 @@
 
 ## Install
 
+> **Note:**: We recommend using a deno.json file to manage your dependencies
 
 ``` bash
 deno add npm:@rocket-kit/edge npm:zod jsr:@supabase/functions-js/edge-runtime.d.ts
 ```
 
+### Recommended Architecture
+``` text
+.
+└──supabase
+    ├── common ('methods that share multiple functions')
+    └── functions ('functions')
+        └── <function-name>
+            ├── index.ts ('router')
+            ├── utils ('methods that share multiple modules')
+            └── modules ('modules')
+                └── module ('exemple for POST method use name "createProduct" or GET "getProductById"')
+                    ├──  controller.ts
+                    └── service.ts
+
+```
 
 ## Example Usage
 
 
 ### Sigle Example
 
-```typescript
-//  file: ./index.ts
 
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+
+
+```typescript
+// path: ./index.ts
+
+import "@supabase/functions-js/edge-runtime.d.ts";
 
 import { onEdge } from "@rocket-kit/edge";
-import { Middleware } from './middleware';
 import { Controller } from './controller';
 
 const Controller = onEdge({
@@ -35,17 +53,17 @@ Deno.serve(Controller);
 ```
 
 ### Full Example
-
+<!--
 #### Middleware
 
 
 ``` typescript
-//  file: ./example.middleware.ts
+// path: ./example.middleware.ts
 
-import { onEdge } from "npm:@rocket-kit/edge";
+import { onEdge } from "@rocket-kit/edge";
 
 export const Middleware = onEdge({
-    Handler(_req, _reply, _info, next) {
+    Handler(_req, _reply, next) {
         console.log("Middleware")
 
         return next!();
@@ -53,30 +71,81 @@ export const Middleware = onEdge({
 });
 
 ```
+ -->
+
+#### Schemas
+
+
+``` typescript
+// path: ./modules/example/schemas.ts
+import { z } from "zod";
+
+export const exampleBodySchemas = z.object({
+    name: z.string().optional(),
+});
+
+export type exampleBodyType = Zod.infer<typeof exampleBodySchemas>
+
+export const exampleSchemas = {
+    params: z.object({
+        id: z.string().regex(/^[0-9]+$/, {
+            message: "The id must be a number",
+        }),
+    }),
+    query: z.object({
+        name: z.string().optional(),
+    }),
+    body: exampleBodySchemas,
+}
+
+```
+
+#### service
+
+``` typescript
+// path: ./modules/example/service.ts
+
+import { exampleBodyType } from "./schemas";
+import { onSupabase, SupaError } from "@rocket-kit/edge";
+
+interface exampleServiceParamsType {
+    id: string;
+    name: string;
+    body: exampleBodyType;
+}
+
+type ExampleServiceFn = (p: exampleServiceParamsType) => string;
+
+export const exampleService = async ({ id, name, body }) => {
+    // method that returns a supabase client in a very simple way
+    const supabase = onSupabase();
+
+    const { data, error } = await supabase
+        .from("users")
+        .update(body)
+        .eq("id", id)
+        .eq("name", name)
+        .throwOnError();
+
+    // SupaError es para la validación de errores de la consulta.
+    if (error) throw new SupaError(error);
+
+    return "Hello from Supabase Edge Functions!";
+}
+```
 
 #### Controller
 
 ``` typescript
-//  file: ./example.controller.ts
+// path: ./modules/example/controller.ts
 
-import { z } from "zod";
-import { onEdge, onSupabase, SupaError, ReasonPhrases, StatusCodes } from "npm:@rocket-kit/edge";
+import { exampleSchemas } from "./schemas";
+import { exampleService } from "./service";
+import { onEdge, ReasonPhrases, StatusCodes } from "@rocket-kit/edge";
 
-export const Controller = onEdge({
+export const exampleController = onEdge({
     // zod schemas
-    schemas: {
-        params: z.object({
-            id: z.string().regex(/^[0-9]+$/, {
-                message: "The id must be a number",
-            }),
-        }),
-        query: z.object({
-            name: z.string().optional(),
-        }),
-        body: z.object({
-            name: z.string().optional(),
-        }),
-    },
+    schemas: exampleSchema,
     // logic that is executed with the controller
     async Handler(req, reply) {
         // custom method for getting and validation information
@@ -86,16 +155,14 @@ export const Controller = onEdge({
 
         const query = req.getQuery(["name"]);
 
-        // method that returns a supabase client in a very simple way
-        const supabase = onSupabase({ req });
-
-        const { data, error } = await supabase.from("users").select("*")
-          .throwOnError();
-
-        if (error) throw new SupaError(error);
+        const message = exampleService({
+            id: params.id,
+            name: query.name,
+            body
+        });
 
         return reply.json({
-          message: "Hello from Supabase Edge Functions!",
+          message,
           params,
           body,
           query,
@@ -112,18 +179,89 @@ export const Controller = onEdge({
 #### Router
 
 ```typescript
-//  file: ./index.ts
+// path: ./index.ts
 
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import "@supabase/functions-js/edge-runtime.d.ts";
 
-import { onRouter } from "npm:@rocket-kit/edge";
-import { Middleware } from './middleware';
-import { Controller } from './controller';
+import { onRouter } from "@rocket-kit/edge";
+import { Controller } from './modules/example/controller.ts';
 
 // method for router
 const router = onRouter();
 
-router.get("/example/:id", Middleware, Controller);
+router.get("/example/:id", exampleController);
+
+Deno.serve(router.listen);
+```
+
+#### Middleware
+
+``` typescript
+// path: ./utils/middleware.ts or ./modules/example//middleware.ts
+
+import { exampleSchemas } from "./schemas";
+import { exampleService } from "./service";
+import { onEdge, ReasonPhrases, StatusCodes } from "@rocket-kit/edge";
+
+export const exampleMiddleware = onEdge({
+    // zod schemas
+    schemas: exampleSchema,
+    // logic that is executed with the controller
+    async Handler(_req, _reply, next) {
+
+        // Logic
+
+        return next!();
+    },
+});
+
+```
+
+
+You can use any number of middleware, before or after the routes,
+remembering that all pre must return next to move on to the next step
+in the life cycle or reply to respond to the client and stop the cycle.
+
+#### Use global middlewae in a routes
+```typescript
+// path: ./index.ts
+
+import "@supabase/functions-js/edge-runtime.d.ts";
+
+import { onRouter } from "@rocket-kit/edge";
+import { exampleMiddleware } from './urils/middleware';
+import { Controller } from './modules/example/controller.ts';
+
+// method for router
+const router = onRouter();
+
+
+router.get("/example/pre/:id", exampleMiddleware, exampleController /* ...edge cotrollers */);
+
+router.get("/example/pos/:id", exampleController,  exampleMiddleware /* ...edge cotrollers */);
+
+Deno.serve(router.listen);
+```
+
+#### Use global middlewae in all routes
+```typescript
+// path: ./index.ts
+
+import "@supabase/functions-js/edge-runtime.d.ts";
+
+import { onRouter } from "@rocket-kit/edge";
+import { exampleMiddleware } from './urils/middleware';
+import { Controller } from './modules/example/controller.ts';
+
+// method for router
+const router = onRouter();
+
+router.preMiddy(exampleMiddleware, /* ...edge cotrollers */);
+
+router.get("/example/:id", exampleController);
+
+router.posMiddy(exampleMiddleware, /* ...edge cotrollers */);
+
 
 Deno.serve(router.listen);
 ```
