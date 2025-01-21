@@ -75,6 +75,8 @@ export default class ValidAndFormat<
 	params(): TypeOf<P> {
 		const { store } = this.NativeInfo;
 
+		if (!store && !this.Schemas?.params) return {};
+
 		if (!store && this.Schemas?.params) {
 			throw new Error(
 				"In order to use route parameters you must implement the 'onRouter' method and create a router",
