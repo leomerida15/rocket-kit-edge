@@ -1,4 +1,4 @@
-import { StatusCodes, getReasonPhrase } from "http-status-codes";
+import { getReasonPhrase, StatusCodes } from "http-status-codes";
 
 interface EdgeErrorParams {
 	status?: number;
@@ -22,7 +22,7 @@ export class EdgeError extends Error {
 
 	get resp(): [string, { status: number; statusText?: string }] {
 		return [
-			super.message,
+			this.message,
 			{
 				status: this.status,
 				statusText: this.statusText,

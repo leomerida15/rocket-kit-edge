@@ -1,22 +1,21 @@
-// deno-lint-ignore-file no-explicit-any
-import { TypeOf, ZodObject, ZodType, ZodTypeDef } from "zod";
+import { z, ZodObject, ZodType } from "zod";
 import { IZodSchemasValid } from "./types";
 
 export default class ValidAndFormat<
-	B extends ZodType<any, ZodTypeDef, any>,
+	B extends ZodType<any, any, any>,
 	C extends ZodObject<any>,
 	Q extends ZodObject<any>,
 	P extends ZodObject<any>,
 > {
 	private readonly Schemas?: IZodSchemasValid<B, C, Q, P>;
-	private readonly NativeInfo: TypeOf<C>;
+	private readonly NativeInfo: z.infer<C>;
 	private readonly nativeRequest: Request;
 	private readonly valid_methods: boolean;
-	private bodyNative: TypeOf<B> | undefined;
+	private bodyNative: z.infer<B> | undefined;
 
 	constructor(
 		nativeRequest: Request,
-		Info: TypeOf<C>,
+		Info: z.infer<C>,
 		Schemas?: IZodSchemasValid<B, C, Q, P>,
 	) {
 		this.Schemas = Schemas;
@@ -25,7 +24,7 @@ export default class ValidAndFormat<
 		this.valid_methods = !["DELETE", "GET"].includes(nativeRequest.method);
 	}
 
-	private getQueryParams(): URLSearchParams {
+	private getNativeQueryParams(): URLSearchParams {
 		const url = new URL(
 			this.nativeRequest.url,
 			this.nativeRequest.headers.get("origin") || "about:blank",
@@ -35,47 +34,49 @@ export default class ValidAndFormat<
 	}
 
 	private getQueryWhoNoHasSchema(): (
-		queriesArray: Array<keyof TypeOf<Q>>,
-	) => Partial<TypeOf<Q>> {
+		queriesArray: Array<keyof z.infer<Q>>,
+	) => Partial<z.infer<Q>> {
 		return (queriesArray) => {
 			const resQueries: any = {};
 			queriesArray.map((q) => {
-				resQueries[q] = this.getQueryParams().get(String(q));
+				resQueries[q] = this.getNativeQueryParams().get(String(q));
 			});
 			return resQueries;
 		};
 	}
 
 	private createGetQueryWhoHasSchema(
-		queryFormat: TypeOf<Q>,
-	): (queriesArray: Array<keyof TypeOf<Q>>) => Partial<TypeOf<Q>> {
+		queryFormat: z.infer<Q>,
+	): (queriesArray: Array<keyof z.infer<Q>>) => Partial<z.infer<Q>> {
 		return (queriesArray) => {
 			const queryFilter = Object.entries(queryFormat).filter(([k]) =>
-				queriesArray.includes(k),
+				queriesArray.includes(k)
 			);
-			const queryObj = Object.fromEntries(queryFilter) as Partial<TypeOf<Q>>;
+			const queryObj = Object.fromEntries(queryFilter) as Partial<
+				z.infer<Q>
+			>;
 			return queryObj;
 		};
 	}
 
-	Info(): TypeOf<C> {
+	Info(): z.infer<C> {
 		return this.Schemas?.Info?.parse(this.NativeInfo) || this.NativeInfo;
 	}
 
-	query(): (queriesArray: Array<keyof TypeOf<Q>>) => Partial<TypeOf<Q>> {
+	query(): (queriesArray: Array<keyof z.infer<Q>>) => Partial<z.infer<Q>> {
 		return this.Schemas?.query
 			? this.createGetQueryWhoHasSchema(
-					this.Schemas.query.parse(
-						Object.fromEntries(this.getQueryParams().entries()),
-					) as TypeOf<Q>,
-				)
+				this.Schemas.query.parse(
+					Object.fromEntries(this.getNativeQueryParams().entries()),
+				) as z.infer<Q>,
+			)
 			: this.getQueryWhoNoHasSchema();
 	}
 
-	params(): TypeOf<P> {
+	params(): z.infer<P> {
 		const { store } = this.NativeInfo;
 
-		if (!store && !this.Schemas?.params) return {};
+		if (!store && !this.Schemas?.params) return {} as z.infer<P>;
 
 		if (!store && this.Schemas?.params) {
 			throw new Error(
@@ -83,9 +84,11 @@ export default class ValidAndFormat<
 			);
 		}
 
-		if (!this.Schemas?.params) return store.get("params") as object;
+		if (!this.Schemas?.params) {
+			return (store as any).get("params") as z.infer<P>;
+		}
 
-		return this.Schemas?.params.parse(store.get("params"));
+		return this.Schemas?.params.parse((store as any).get("params"));
 	}
 
 	private async defineBody() {
@@ -94,7 +97,7 @@ export default class ValidAndFormat<
 		}
 	}
 
-	async body(): Promise<TypeOf<B>> {
+	async body(): Promise<z.infer<B>> {
 		await this.defineBody();
 		return this.Schemas?.body?.parse(this.bodyNative) || this.bodyNative;
 	}

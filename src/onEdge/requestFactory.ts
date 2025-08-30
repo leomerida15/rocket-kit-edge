@@ -1,4 +1,4 @@
-import { TypeOf, ZodObject, ZodType, ZodTypeDef } from "zod";
+import { z, ZodObject, ZodType } from "zod";
 import { IZodRequestFactoryResp, IZodSchemasValid } from "./types";
 import ValidAndFormat from "./validAndFormat";
 
@@ -16,19 +16,19 @@ import ValidAndFormat from "./validAndFormat";
  * @returns The modified request.
  */
 export const requestFactory = async <
-	B extends ZodType<any, ZodTypeDef, any>,
+	B extends ZodType<any, any, any>,
 	C extends ZodObject<any>,
 	Q extends ZodObject<any>,
 	P extends ZodObject<any>,
 >(
 	nativeRequest: Request,
-	info: TypeOf<C>,
+	info: Deno.ServeHandlerInfo,
 	Schemas?: IZodSchemasValid<B, C, Q, P>,
 ) => {
 	// Create an instance of ValidAndFormat.
 	const validAndFormat = new ValidAndFormat<B, C, Q, P>(
 		nativeRequest,
-		info,
+		info as z.infer<C>,
 		Schemas,
 	);
 
@@ -47,9 +47,10 @@ export const requestFactory = async <
 	// Add the getInfo, getQuery and getBody methods to the request.
 	(nativeRequest as unknown as IZodRequestFactoryResp<B, C, Q, P>).getInfo =
 		() => Info;
-	(nativeRequest as unknown as IZodRequestFactoryResp<B, C, Q, P>).getQuery = (
-		keys: Array<keyof TypeOf<Q> | string>,
-	) => Query(keys);
+	(nativeRequest as unknown as IZodRequestFactoryResp<B, C, Q, P>).getQuery =
+		(
+			keys: string[],
+		) => Query(keys as Array<keyof z.infer<Q>>);
 	(nativeRequest as unknown as IZodRequestFactoryResp<B, C, Q, P>).getBody =
 		() => body;
 

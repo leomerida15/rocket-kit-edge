@@ -1,5 +1,4 @@
-import { Deno } from "@deno/types";
-import { StatusCodes, getReasonPhrase } from "http-status-codes";
+import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import { RocketEnvs } from "../global.env";
 
 type httpMethods = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS";
@@ -67,7 +66,9 @@ export const onRouter = () => {
 							reject(undefined);
 						}) as unknown as () => Response;
 
-						return resolver(Event(...params, next) as Response | undefined);
+						return resolver(
+							Event(...params, next) as Response | undefined,
+						);
 					});
 
 				const response = await onAwaited(params);

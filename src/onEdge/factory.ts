@@ -1,6 +1,5 @@
-import { Deno as DenoTypes } from "@deno/types";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
-import { ZodError, ZodObject, ZodType, ZodTypeDef } from "zod";
+import { ZodError, ZodObject, ZodType } from "zod";
 import { RocketEnvs } from "../global.env";
 import { EdgeError } from "./EdgeError";
 import { requestFactory } from "./requestFactory";
@@ -10,7 +9,7 @@ import { IZodRouteParams } from "./types";
 const jwt = process.env.SUPABASE_JWT;
 
 export const onEdge = <
-	B extends ZodType<any, ZodTypeDef, any>,
+	B extends ZodType<any, any, any>,
 	C extends ZodObject<any>,
 	Q extends ZodObject<any>,
 	P extends ZodObject<any>,
@@ -21,7 +20,7 @@ export const onEdge = <
 
 	const controllerFactory = async (
 		request: Request,
-		Info: DenoTypes.ServeHandlerInfo,
+		Info: Deno.ServeHandlerInfo,
 		next?: () => Response,
 	) => {
 		try {
@@ -44,7 +43,11 @@ export const onEdge = <
 				};
 			})();
 
-			const req = await requestFactory<B, C, Q, P>(request, Info, schemas);
+			const req = await requestFactory<B, C, Q, P>(
+				request,
+				Info,
+				schemas,
+			);
 
 			const auth = req.headers.get("Authorization");
 
@@ -62,7 +65,7 @@ export const onEdge = <
 				});
 			}
 
-			if (error instanceof ReferenceError || error instanceof Error)
+			if (error instanceof ReferenceError || error instanceof Error) {
 				return reply.json(
 					{
 						...error,
@@ -70,6 +73,7 @@ export const onEdge = <
 					},
 					{ status: StatusCodes.BAD_REQUEST },
 				);
+			}
 
 			return reply.json(error as string | object | number, {
 				status: StatusCodes.BAD_REQUEST,
