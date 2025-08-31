@@ -208,12 +208,14 @@ export const onRouter = () => {
 				if (error instanceof Error) {
 					console.error("⚠️schema error", error.message);
 					console.error("🔥cause", error.cause);
-					return Response.json(error.cause, {
+					return Response.json(JSON.parse(error.message), {
 						status: StatusCodes.INTERNAL_SERVER_ERROR,
 						statusText: error.message,
 						headers,
 					});
 				}
+
+				console.log("error.name", error.name);
 
 				return Response.json(error, {
 					status: StatusCodes.INTERNAL_SERVER_ERROR,
