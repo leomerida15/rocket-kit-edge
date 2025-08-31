@@ -60,45 +60,79 @@ export default class ValidAndFormat<
 	}
 
 	Info(): z.infer<C> {
-		return this.Schemas?.Info?.parse(this.NativeInfo) || this.NativeInfo;
+		const Schema = this.Schemas?.Info;
+		if (!Schema) return this.NativeInfo;
+
+		const { success, data, error } = Schema.safeParse(
+			this.NativeInfo,
+		);
+
+		if (!success) {
+			throw new Error(error.message, { cause: error });
+		}
+
+		return data;
 	}
 
 	query(): (queriesArray: Array<keyof z.infer<Q>>) => Partial<z.infer<Q>> {
-		return this.Schemas?.query
-			? this.createGetQueryWhoHasSchema(
-				this.Schemas.query.parse(
-					Object.fromEntries(this.getNativeQueryParams().entries()),
-				) as z.infer<Q>,
-			)
-			: this.getQueryWhoNoHasSchema();
+		const Schema = this.Schemas?.query;
+		if (!Schema) return this.getQueryWhoNoHasSchema();
+
+		const { success, data, error } = Schema.safeParse(
+			Object.fromEntries(this.getNativeQueryParams().entries()),
+		);
+
+		if (!success) {
+			throw new Error(error.message, { cause: error });
+		}
+
+		return this.createGetQueryWhoHasSchema(data);
 	}
 
 	params(): z.infer<P> {
+		const Schema = this.Schemas?.params;
 		const { store } = this.NativeInfo;
 
-		if (!store && !this.Schemas?.params) return {} as z.infer<P>;
+		if (!store && !Schema) return {} as z.infer<P>;
 
-		if (!store && this.Schemas?.params) {
+		if (!store && Schema) {
 			throw new Error(
 				"In order to use route parameters you must implement the 'onRouter' method and create a router",
 			);
 		}
 
-		if (!this.Schemas?.params) {
+		if (!Schema) {
 			return (store as any).get("params") as z.infer<P>;
 		}
 
-		return this.Schemas?.params.parse((store as any).get("params"));
+		const { success, data, error } = Schema.safeParse(
+			(store as any).get("params"),
+		);
+
+		if (!success) {
+			throw new Error(error.message, { cause: error });
+		}
+
+		return data;
 	}
 
 	private async defineBody() {
-		if (this.valid_methods && this.Schemas?.body) {
+		if (this.valid_methods) {
 			this.bodyNative = await this.nativeRequest.json();
 		}
 	}
 
 	async body(): Promise<z.infer<B>> {
 		await this.defineBody();
-		return this.Schemas?.body?.parse(this.bodyNative) || this.bodyNative;
+		const Schema = this.Schemas?.body;
+		if (!Schema) return this.bodyNative as any;
+
+		const { success, data, error } = Schema.safeParse(this.bodyNative);
+
+		if (!success) {
+			throw new Error(error.message, { cause: error });
+		}
+
+		return data;
 	}
 }
