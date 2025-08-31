@@ -168,59 +168,39 @@ export const onRouter = () => {
 
 		listen(...props: Parameters<Deno.ServeHandler>) {
 			const req = props[0];
-			try {
-				const jwt = req.headers.get("Authorization");
+			const jwt = req.headers.get("Authorization");
 
-				if (jwt) RocketEnvs.set("SUPABASE_JWT", jwt);
+			if (jwt) RocketEnvs.set("SUPABASE_JWT", jwt);
 
-				const url = new URL(req.url);
+			const url = new URL(req.url);
 
-				const method = req.method as httpMethods;
+			const method = req.method as httpMethods;
 
-				// Extract the last part of the path as the command
-				const pathname = url.pathname;
+			// Extract the last part of the path as the command
+			const pathname = url.pathname;
 
-				const httpMethods = httpMethodsMap.get(method);
+			const httpMethods = httpMethodsMap.get(method);
 
-				if (method === "OPTIONS" && !httpMethods) {
-					return defaultOptions();
-				}
-				if (!httpMethods) return notfound();
-
-				const paths = Array.from(httpMethods.keys());
-
-				const command = matchRoute(pathname, paths);
-
-				if (!command) return notfound();
-
-				if (command.params) store.set("params", command.params);
-
-				const controllers = httpMethods.get(command.path);
-
-				if (!controllers?.length) return notfound();
-
-				(props[1] as Info).store = store;
-
-				return EventLoop(controllers, props) as Promise<Response>;
-			} catch (error) {
-				console.log("error", error);
-				const headers = new Headers();
-
-				if (error instanceof Error) {
-					console.error("⚠️schema error", error.message);
-					console.error("🔥cause", error.cause);
-					return Response.json(JSON.parse(error.message), {
-						status: StatusCodes.INTERNAL_SERVER_ERROR,
-						statusText: error.message,
-						headers,
-					});
-				}
-
-				return Response.json(error, {
-					status: StatusCodes.INTERNAL_SERVER_ERROR,
-					headers,
-				});
+			if (method === "OPTIONS" && !httpMethods) {
+				return defaultOptions();
 			}
+			if (!httpMethods) return notfound();
+
+			const paths = Array.from(httpMethods.keys());
+
+			const command = matchRoute(pathname, paths);
+
+			if (!command) return notfound();
+
+			if (command.params) store.set("params", command.params);
+
+			const controllers = httpMethods.get(command.path);
+
+			if (!controllers?.length) return notfound();
+
+			(props[1] as Info).store = store;
+
+			return EventLoop(controllers, props) as Promise<Response>;
 		},
 	};
 };

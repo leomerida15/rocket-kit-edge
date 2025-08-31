@@ -67,9 +67,7 @@ export default class ValidAndFormat<
 			this.NativeInfo,
 		);
 
-		if (!success) {
-			throw new Error(error.message, { cause: error });
-		}
+		if (!success) throw error;
 
 		return data;
 	}
@@ -82,9 +80,7 @@ export default class ValidAndFormat<
 			Object.fromEntries(this.getNativeQueryParams().entries()),
 		);
 
-		if (!success) {
-			throw new Error(error.message, { cause: error });
-		}
+		if (!success) throw error;
 
 		return this.createGetQueryWhoHasSchema(data);
 	}
@@ -109,9 +105,7 @@ export default class ValidAndFormat<
 			(store as any).get("params"),
 		);
 
-		if (!success) {
-			throw new Error(error.message, { cause: error });
-		}
+		if (!success) throw error;
 
 		return data;
 	}
@@ -129,9 +123,7 @@ export default class ValidAndFormat<
 
 		const { success, data, error } = Schema.safeParse(this.bodyNative);
 
-		if (!success) {
-			throw new Error(error.message, { cause: error });
-		}
+		if (!success) throw error;
 
 		return data;
 	}
