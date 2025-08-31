@@ -206,8 +206,9 @@ export const onRouter = () => {
 				const headers = new Headers();
 
 				if (error instanceof Error) {
-					console.error(error);
-					return Response.json(error, {
+					console.error("⚠️schema error", error.message);
+					console.error("🔥cause", error.cause);
+					return Response.json(error.cause, {
 						status: StatusCodes.INTERNAL_SERVER_ERROR,
 						statusText: error.message,
 						headers,
