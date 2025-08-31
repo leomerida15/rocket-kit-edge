@@ -207,7 +207,7 @@ export const onRouter = () => {
 
 				if (error instanceof Error) {
 					console.error(error);
-					return Response.json(error.message, {
+					return Response.json(error, {
 						status: StatusCodes.INTERNAL_SERVER_ERROR,
 						statusText: error.message,
 						headers,
