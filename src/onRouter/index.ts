@@ -203,6 +203,7 @@ export const onRouter = () => {
 
 				return EventLoop(controllers, props) as Promise<Response>;
 			} catch (error) {
+				console.log("error", error);
 				const headers = new Headers();
 
 				if (error instanceof Error) {
@@ -214,8 +215,6 @@ export const onRouter = () => {
 						headers,
 					});
 				}
-
-				console.log("error.name", error.name);
 
 				return Response.json(error, {
 					status: StatusCodes.INTERNAL_SERVER_ERROR,
