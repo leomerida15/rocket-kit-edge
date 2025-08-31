@@ -168,38 +168,57 @@ export const onRouter = () => {
 
 		listen(...props: Parameters<Deno.ServeHandler>) {
 			const req = props[0];
+			try {
+				const jwt = req.headers.get("Authorization");
 
-			const jwt = req.headers.get("Authorization");
+				if (jwt) RocketEnvs.set("SUPABASE_JWT", jwt);
 
-			if (jwt) RocketEnvs.set("SUPABASE_JWT", jwt);
+				const url = new URL(req.url);
 
-			const url = new URL(req.url);
+				const method = req.method as httpMethods;
 
-			const method = req.method as httpMethods;
+				// Extract the last part of the path as the command
+				const pathname = url.pathname;
 
-			// Extract the last part of the path as the command
-			const pathname = url.pathname;
+				const httpMethods = httpMethodsMap.get(method);
 
-			const httpMethods = httpMethodsMap.get(method);
+				if (method === "OPTIONS" && !httpMethods) {
+					return defaultOptions();
+				}
+				if (!httpMethods) return notfound();
 
-			if (method === "OPTIONS" && !httpMethods) return defaultOptions();
-			if (!httpMethods) return notfound();
+				const paths = Array.from(httpMethods.keys());
 
-			const paths = Array.from(httpMethods.keys());
+				const command = matchRoute(pathname, paths);
 
-			const command = matchRoute(pathname, paths);
+				if (!command) return notfound();
 
-			if (!command) return notfound();
+				if (command.params) store.set("params", command.params);
 
-			if (command.params) store.set("params", command.params);
+				const controllers = httpMethods.get(command.path);
 
-			const controllers = httpMethods.get(command.path);
+				if (!controllers?.length) return notfound();
 
-			if (!controllers?.length) return notfound();
+				(props[1] as Info).store = store;
 
-			(props[1] as Info).store = store;
+				return EventLoop(controllers, props) as Promise<Response>;
+			} catch (error) {
+				const headers = new Headers();
 
-			return EventLoop(controllers, props) as Promise<Response>;
+				if (error instanceof Error) {
+					console.error(error);
+					return Response.json(error.message, {
+						status: StatusCodes.INTERNAL_SERVER_ERROR,
+						statusText: error.message,
+						headers,
+					});
+				}
+
+				return Response.json(error, {
+					status: StatusCodes.INTERNAL_SERVER_ERROR,
+					headers,
+				});
+			}
 		},
 	};
 };
